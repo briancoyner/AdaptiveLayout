@@ -1,0 +1,8 @@
+/* 
+  Created by Brian Coyner on 7/9/18.
+  Copyright © 2018 High Rail, LLC. All rights reserved.
+*/
+
+"toolbar.filtered-by-button.title %@" = "%1$@ ▾";
+"alert.show-filter-by-title.text" = "Filter By";
+"alert-action.cancel-title.text" = "Cancel";
