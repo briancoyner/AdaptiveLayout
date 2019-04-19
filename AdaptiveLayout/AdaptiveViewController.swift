@@ -60,6 +60,7 @@ extension AdaptiveViewController {
         
         let distance = pointB.distance(to: pointA)
         let meters = Measurement(value: distance, unit: UnitLength.meters)
+
         print("Distance: \(meters.converted(to: .miles))")
     }
 }

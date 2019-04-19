@@ -89,36 +89,15 @@ extension AdaptiveActionsViewController {
             return
         }
 
-        view.subviews.forEach({ $0.removeFromSuperview() })
+        view.subviews.forEach { $0.removeFromSuperview() }
 
         switch traitCollection.horizontalSizeClass {
         case .compact:
-            let button = makeButton(withTitle: makeButtonTitle(for: actions[selectedActionIndex]))
-            view.addSubview(button)
-
-            NSLayoutConstraint.activate([
-                button.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-                button.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-                button.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-                button.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
-            ])
-
-            sizeClassState = .compact(button)
+            transitionToCompactState()
         case .regular, .unspecified:
-            let segmentedControl = makeSegmentedControl(with: actions)
-
-            view.addSubview(segmentedControl)
-            NSLayoutConstraint.activate([
-                segmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-                segmentedControl.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-                segmentedControl.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-                segmentedControl.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
-            ])
-
-            segmentedControl.selectedSegmentIndex = selectedActionIndex
-            actions[selectedActionIndex].action()
-
-            sizeClassState = .regular(segmentedControl)
+            transitionToRegularState()
+        @unknown default:
+            transitionToRegularState()
         }
     }
 }
@@ -166,11 +145,45 @@ extension AdaptiveActionsViewController {
 
 extension AdaptiveActionsViewController {
 
+    fileprivate func transitionToCompactState() {
+        let button = makeButton(withTitle: makeButtonTitle(for: actions[selectedActionIndex]))
+        view.addSubview(button)
+
+        NSLayoutConstraint.activate([
+            button.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            button.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            button.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            button.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
+        ])
+
+        sizeClassState = .compact(button)
+    }
+
+    fileprivate func transitionToRegularState() {
+        let segmentedControl = makeSegmentedControl(with: actions)
+
+        view.addSubview(segmentedControl)
+        NSLayoutConstraint.activate([
+            segmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            segmentedControl.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            segmentedControl.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            segmentedControl.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
+        ])
+
+        segmentedControl.selectedSegmentIndex = selectedActionIndex
+        actions[selectedActionIndex].action()
+
+        sizeClassState = .regular(segmentedControl)
+    }
+}
+
+extension AdaptiveActionsViewController {
+
     fileprivate func makeButton(withTitle title: String?) -> UIButton {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
 
-        button.titleLabel?.font = .systemFont(ofSize: 17)
+        button.titleLabel?.font = .preferredFont(forTextStyle: .body)
         button.setTitle(title, for: .normal)
 
         button.addTarget(self, action: #selector(userTappedActionButton), for: .primaryActionTriggered)
